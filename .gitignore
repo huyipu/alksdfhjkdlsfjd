@@ -52,3 +52,6 @@ app.*.map.json
 *.csr
 *_base64.txt
 ios-ci-secrets.md
+*.p8
+AuthKey_*
+ios-ci-secrets.md
