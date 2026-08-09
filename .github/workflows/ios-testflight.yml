@@ -55,6 +55,8 @@ jobs:
 
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
 
+          security default-keychain -s $KEYCHAIN_PATH
+
           # 把签名 keychain 放到搜索列表最前，同时保留 runner 原有的 keychain（否则系统里的中间证书/根证书不可见）
           ORIGINAL_KEYCHAINS=$(security list-keychains -d user | sed -e 's/ *"//g')
           security list-keychains -d user -s $KEYCHAIN_PATH $ORIGINAL_KEYCHAINS
@@ -72,7 +74,18 @@ jobs:
           fi
 
       - name: Build IPA
+        env:
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
+          # 跨步骤后 keychain 搜索列表可能被重置，构建前重新挂上并解锁签名 keychain
+          KEYCHAIN_PATH=$RUNNER_TEMP/signing.keychain-db
+          security list-keychains -d user -s $KEYCHAIN_PATH $(security list-keychains -d user | sed -e 's/ *"//g')
+          security default-keychain -s $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          echo "=== 本步骤可见的签名身份 ==="
+          security find-identity -v -p codesigning
+
           flutter build ipa --release \
             --build-number=${{ github.run_number }} \
             --export-options-plist=ios/ExportOptions.plist
