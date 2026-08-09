@@ -1,0 +1,192 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
+import 'package:dio/dio.dart';
+import '../models/app_config.dart';
+import '../utils/prefs.dart';
+
+class ApiService {
+  static final ApiService _instance = ApiService._internal();
+  factory ApiService() => _instance;
+  ApiService._internal();
+
+  late final Dio _dio;
+  AppConfig? _config;
+
+  /// 后台 app_code（与 tlbb-admin「APP管理」一致，双端共用一个）
+  static const String appCode = 'tlbb';
+
+  /// 后台接口密钥（tlbb-admin → APP管理 → 接口密钥；空则后台跳过签名校验）
+  static const String appSecret = '44e7af327be5157db77fbcb351f8fd657878d4a91ac91b64';
+
+  AppConfig? get config => _config;
+  String get baseUrl => _dio.options.baseUrl;
+
+  /// 平台标记：android / ios（统计与配置平台覆盖都靠它）
+  static String get platform => Platform.isIOS ? 'ios' : 'android';
+
+  /// 接口地址：默认本机局域网调试地址；打包/部署用 --dart-define=API_BASE_URL=xxx 覆盖
+  static const String _baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://192.168.0.102:3010',
+  );
+
+  void init() {
+    _dio = Dio(BaseOptions(
+      baseUrl: _baseUrl,
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ));
+  }
+
+  // ---------------- HMAC 签名（见 docs/App端接口签名对接指南.md） ----------------
+
+  Map<String, String> _signedHeaders(String rawBody) {
+    if (appSecret.isEmpty) return {};
+    final ts = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+    final bodyHash = sha256.convert(utf8.encode(rawBody)).toString();
+    final sign = Hmac(sha256, utf8.encode(appSecret))
+        .convert(utf8.encode('$appCode\n$ts\n$bodyHash'))
+        .toString();
+    return {
+      'X-App-Code': appCode,
+      'X-Timestamp': ts,
+      'X-Sign': sign,
+    };
+  }
+
+  // ---------------- 配置 ----------------
+
+  Future<AppConfig?> fetchConfig() async {
+    try {
+      final response = await _dio.get(
+        '/api/v1/config',
+        queryParameters: {'app_code': appCode, 'platform': platform},
+        options: Options(headers: _signedHeaders('')),
+      );
+      if (response.statusCode == 200 && response.data != null) {
+        _config = AppConfig.fromJson(response.data);
+        return _config;
+      }
+    } catch (e) {
+      print('fetchConfig error: $e');
+    }
+    return null;
+  }
+
+  // ---------------- 设备与统计 ----------------
+
+  Future<String> getDeviceId() async {
+    await Prefs().init();
+    String? deviceId = Prefs().getString(Prefs.keyDeviceId);
+    if (deviceId == null || deviceId.isEmpty) {
+      deviceId = _generateDeviceId();
+      await Prefs().setString(Prefs.keyDeviceId, deviceId);
+      await reportStat('device');
+    }
+    return deviceId;
+  }
+
+  Future<void> reportStat(String field) async {
+    try {
+      final body = jsonEncode({
+        'app_code': appCode,
+        'field': field,
+        'platform': platform,
+      });
+      await _dio.post('/api/app/stats',
+          data: body,
+          options: Options(
+            contentType: Headers.jsonContentType,
+            headers: _signedHeaders(body),
+          ));
+    } catch (e) {
+      print('reportStat error: $e');
+    }
+  }
+
+  /// 事件名 → 触发来源映射（TrackService/检测模式写入，日志上报时读取）
+  final Map<String, String> eventSources = {};
+
+  /// 上报 SDK 事件发送日志到后台（受后台 log_report_enable 开关控制）
+  Future<void> reportEventLog(
+    String eventName, {
+    String? requestId,
+    bool success = true,
+    int? reason,
+  }) async {
+    if (_config?.logReportEnable != true) return;
+    try {
+      var deviceId = Prefs().getString(Prefs.keyDeviceId) ?? '';
+      if (deviceId.isEmpty) {
+        deviceId = await getDeviceId();
+      }
+      final body = jsonEncode({
+        'app_code': appCode,
+        'event_name': eventName,
+        'request_id': requestId,
+        'success': success,
+        'reason': reason,
+        'device_id': deviceId,
+        'android_id': Prefs().getString(Prefs.keyAndroidId) ?? '',
+        'platform': platform,
+        'source': eventSources[eventName] ??
+            (eventName == 'init' ||
+                    eventName.startsWith('launch_app') ||
+                    eventName == 'play_session' ||
+                    eventName == 'session_sync'
+                ? 'sdk_auto'
+                : ''),
+        'client_time': DateTime.now().toIso8601String(),
+      });
+      await _dio.post('/api/app/event-log',
+          data: body,
+          options: Options(
+            contentType: Headers.jsonContentType,
+            headers: _signedHeaders(body),
+          ));
+    } catch (e) {
+      print('reportEventLog error: $e');
+    }
+  }
+
+  // ---------------- 意见反馈 ----------------
+
+  /// 提交意见反馈，成功返回 true（后台 code==0）
+  Future<bool> submitFeedback({
+    required String category,
+    required String content,
+    String contact = '',
+  }) async {
+    try {
+      final body = jsonEncode({
+        'app_code': appCode,
+        'platform': platform,
+        'category': category,
+        'content': content,
+        'contact': contact,
+        'device_id': Prefs().getString(Prefs.keyDeviceId) ?? '',
+      });
+      final response = await _dio.post('/api/app/feedback',
+          data: body,
+          options: Options(
+            contentType: Headers.jsonContentType,
+            headers: _signedHeaders(body),
+          ));
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data is Map ? response.data : jsonDecode(response.data.toString());
+        return data['code'] == 0;
+      }
+    } catch (e) {
+      print('submitFeedback error: $e');
+    }
+    return false;
+  }
+
+  String _generateDeviceId() {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    final rand = Random.secure();
+    return List.generate(16, (_) => chars[rand.nextInt(chars.length)]).join();
+  }
+}

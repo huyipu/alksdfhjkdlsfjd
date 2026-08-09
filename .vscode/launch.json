@@ -1,0 +1,53 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "tlbb_app (Android debug)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "emulator-5554",
+            "flutterMode": "debug",
+            "args": [
+                "--dart-define=API_BASE_URL=http://192.168.0.102:3010"
+            ],
+            "env": {
+                "JAVA_HOME": "D:\\work\\work\\tools\\jdk\\jdk-17.0.14+7",
+                "ANDROID_HOME": "D:\\work\\work\\tools\\android-sdk",
+                "PUB_HOSTED_URL": "https://pub.flutter-io.cn"
+            }
+        },
+        {
+            "name": "tlbb_app (Pick Android device)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "${command:pickDevice}",
+            "flutterMode": "debug",
+            "args": [
+                "--dart-define=API_BASE_URL=http://192.168.0.102:3010"
+            ],
+            "env": {
+                "JAVA_HOME": "D:\\work\\work\\tools\\jdk\\jdk-17.0.14+7",
+                "ANDROID_HOME": "D:\\work\\work\\tools\\android-sdk",
+                "PUB_HOSTED_URL": "https://pub.flutter-io.cn"
+            }
+        },
+        {
+            "name": "tlbb_app (Android release)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "deviceId": "emulator-5554",
+            "flutterMode": "release",
+            "args": [
+                "--dart-define=API_BASE_URL=http://192.168.0.102:3010"
+            ],
+            "env": {
+                "JAVA_HOME": "D:\\work\\work\\tools\\jdk\\jdk-17.0.14+7",
+                "ANDROID_HOME": "D:\\work\\work\\tools\\android-sdk",
+                "PUB_HOSTED_URL": "https://pub.flutter-io.cn"
+            }
+        }
+    ]
+}

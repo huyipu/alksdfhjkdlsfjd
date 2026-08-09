@@ -1,0 +1,8 @@
+{
+    "dart.flutterSdkPath": "D:\\work\\work\\tools\\flutter",
+    "dart.env": {
+        "JAVA_HOME": "D:\\work\\work\\tools\\jdk\\jdk-17.0.14+7",
+        "ANDROID_HOME": "D:\\work\\work\\tools\\android-sdk",
+        "PUB_HOSTED_URL": "https://pub.flutter-io.cn"
+    }
+}
