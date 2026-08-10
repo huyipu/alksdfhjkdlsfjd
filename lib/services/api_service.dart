@@ -18,7 +18,7 @@ class ApiService {
   static const String appCode = 'tlbb';
 
   /// 后台接口密钥（tlbb-admin → APP管理 → 接口密钥；空则后台跳过签名校验）
-  static const String appSecret = '44e7af327be5157db77fbcb351f8fd657878d4a91ac91b64';
+  static const String appSecret = '3d3b182228bcddb95ecccc7eba0f4835a5919241a0b3560b';
 
   AppConfig? get config => _config;
   String get baseUrl => _dio.options.baseUrl;

@@ -88,6 +88,7 @@ jobs:
 
           flutter build ipa --release \
             --build-number=${{ github.run_number }} \
+            --dart-define=API_BASE_URL=http://119.91.251.139:8018 \
             --export-options-plist=ios/ExportOptions.plist
 
       - name: Upload IPA artifact
