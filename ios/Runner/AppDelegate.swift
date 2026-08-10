@@ -15,7 +15,7 @@ import UIKit
     // 等用户在隐私弹窗点「同意」后（Dart 调 initAds）才真正开始采集上报
     BDASignalManager.enableDelayUpload()
     let bdaLaunchOptions = launchOptions?.reduce(into: [AnyHashable: Any]()) { $0[$1.key] = $1.value }
-    BDASignalManager.didFinishLaunchingWithOptions(bdaLaunchOptions, connectOptions: nil)
+    BDASignalManager.didFinishLaunching(options: bdaLaunchOptions, connect: nil)
 
     let controller = window?.rootViewController as! FlutterViewController
     let channel = FlutterMethodChannel(name: adsChannelName, binaryMessenger: controller.binaryMessenger)
