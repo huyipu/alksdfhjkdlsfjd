@@ -52,5 +52,24 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.huyipu.tlzyone</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.huyipu.tlzyone</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mqqapi</string>
+		<string>mqq</string>
+		<string>mqqbrowser</string>
+	</array>
 </dict>
 </plist>
