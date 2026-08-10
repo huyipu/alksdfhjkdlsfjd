@@ -14,7 +14,8 @@ import UIKit
     // 巨量转化SDK：隐私合规要求——先开启延时上报并传入启动参数，
     // 等用户在隐私弹窗点「同意」后（Dart 调 initAds）才真正开始采集上报
     BDASignalManager.enableDelayUpload()
-    BDASignalManager.didFinishLaunchingWithOptions(launchOptions as NSDictionary?, connectOptions: nil)
+    let bdaLaunchOptions = launchOptions?.reduce(into: [AnyHashable: Any]()) { $0[$1.key] = $1.value }
+    BDASignalManager.didFinishLaunchingWithOptions(bdaLaunchOptions, connectOptions: nil)
 
     let controller = window?.rootViewController as! FlutterViewController
     let channel = FlutterMethodChannel(name: adsChannelName, binaryMessenger: controller.binaryMessenger)
