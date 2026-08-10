@@ -30,8 +30,8 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # 巨量引擎转化SDK（iOS端归因，见 docs/巨量归因方案_iOS端接入指引.md）
-  pod 'BDASignalSDK'
+  # 巨量引擎转化SDK（本地静态库，见 docs/巨量归因方案_iOS端接入指引.md）
+  pod 'BDASignalSDK', :path => 'BDASignalSDK'
   pod 'Protobuf'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
