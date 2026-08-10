@@ -23,7 +23,17 @@ class _SplashPageState extends State<SplashPage> {
   Future<void> _boot() async {
     await Prefs().init();
     ApiService().init();
-    final config = await ApiService().fetchConfig();
+    // 首次安装启动会触发 iOS「无线数据」授权弹窗，授权未完成前请求会失败。
+    // 在启动页停留并间隔重试：用户完成授权后即可拿到配置，再进入隐私页，
+    // 避免隐私页内容为空；全部失败则用本地兜底配置继续。
+    AppConfig? config;
+    for (var attempt = 0; attempt < 6 && config == null; attempt++) {
+      if (attempt > 0) {
+        await Future.delayed(const Duration(seconds: 2));
+        if (!mounted) return;
+      }
+      config = await ApiService().fetchConfig();
+    }
     final cfg = config ?? AppConfig(appName: '天龙亿旧', privacyEnable: true);
     TrackService().init(cfg);
     if (!mounted) return;

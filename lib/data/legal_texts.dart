@@ -72,7 +72,7 @@ SDK 名称：巨量引擎转化SDK
 · 必选信息（仅 iOS）：CPU 数目等基础信息、IDFV、浏览器的类型和版本号；
 · 可选信息（仅 Android）：设备标识符 OAID；
 · 可选信息（仅 iOS）：广告标识符 IDFA（仅在您通过系统授权后采集，您可随时在系统设置中关闭）。
-隐私政策链接：https://support.oceanengine.com/support/content/131992
+隐私政策链接：https://open.oceanengine.com/labels/7/docs/1708428054592516?origin=left_nav
 
 特别提示：上述信息的收集与处理由该第三方 SDK 独立执行，受其自身隐私政策约束。且仅在您点击「同意」本隐私政策弹窗后，该 SDK 才会启动数据采集；在此之前不会进行任何采集与上报。如您希望了解更详细的数据处理规则，建议访问上述链接查阅官方说明。
 
