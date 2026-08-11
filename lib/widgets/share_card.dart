@@ -204,14 +204,9 @@ class _Watermark extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          width: 16,
-          height: 16,
-          decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(4)),
-          child: const Center(
-            child: Text('龙',
-                style: TextStyle(fontSize: 10, color: Color(0xFFE8D9B0), fontWeight: FontWeight.bold, fontFamilyFallback: ['STKaiti', 'KaiTi', 'SimSun'])),
-          ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: Image.asset('assets/logo/app_logo.png', width: 16, height: 16, fit: BoxFit.cover),
         ),
         const SizedBox(width: 6),
         const Text('天龙亿旧 · 经典网游怀旧图鉴', style: TextStyle(fontSize: 11, color: AppColors.inkLight)),

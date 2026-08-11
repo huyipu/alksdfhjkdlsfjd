@@ -56,20 +56,14 @@ class _SplashPageState extends State<SplashPage> {
                 width: 88,
                 height: 88,
                 decoration: BoxDecoration(
-                  color: AppColors.accent,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(color: AppColors.accent.withOpacity(0.3), blurRadius: 16, offset: const Offset(0, 6)),
                   ],
                 ),
-                child: const Center(
-                  child: Text('龙',
-                      style: TextStyle(
-                        fontSize: 48,
-                        color: Color(0xFFE8D9B0),
-                        fontWeight: FontWeight.bold,
-                        fontFamilyFallback: ['STKaiti', 'KaiTi', 'SimSun'],
-                      )),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset('assets/logo/app_logo.png', width: 88, height: 88, fit: BoxFit.cover),
                 ),
               ),
               const SizedBox(height: 20),

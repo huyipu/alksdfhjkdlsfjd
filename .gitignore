@@ -55,3 +55,4 @@ ios-ci-secrets.md
 *.p8
 AuthKey_*
 ios-ci-secrets.md
+assets_src/

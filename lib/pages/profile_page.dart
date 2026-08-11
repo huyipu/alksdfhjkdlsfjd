@@ -27,14 +27,9 @@ class ProfilePage extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(14)),
-                    child: const Center(
-                      child: Text('龙',
-                          style: TextStyle(fontSize: 28, color: Color(0xFFE8D9B0), fontWeight: FontWeight.bold, fontFamilyFallback: ['STKaiti', 'KaiTi', 'SimSun'])),
-                    ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Image.asset('assets/logo/app_logo.png', width: 56, height: 56, fit: BoxFit.cover),
                   ),
                   const SizedBox(width: 16),
                   Expanded(

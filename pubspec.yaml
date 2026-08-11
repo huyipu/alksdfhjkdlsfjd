@@ -30,6 +30,7 @@ flutter:
 
   assets:
     - assets/data/
+    - assets/logo/
     - assets/icons/beasts/
     - assets/icons/beasts/emei/
     - assets/icons/beasts/gaibang/
