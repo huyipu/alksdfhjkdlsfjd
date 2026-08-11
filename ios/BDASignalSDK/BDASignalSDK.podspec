@@ -13,8 +13,10 @@ Pod::Spec.new do |s|
   s.public_header_files = 'BDASignalSDK/*.h'
   s.vendored_libraries  = 'libBDASignalSDK.a'
 
-  # Apple 隐私合规清单（随包分发，见 docs/巨量归因方案_iOS端接入指引.md）
-  s.resource            = 'PrivacyInfo.xcprivacy'
+  # 注意：SDK 自带的 PrivacyInfo.xcprivacy 不再单独进包，
+  # 其声明（DiskSpace E174.1 / FileTimestamp DDA9.1 / UserDefaults CA92.1）
+  # 已按 Apple 静态库要求合并进 App 级 ios/Runner/PrivacyInfo.xcprivacy，
+  # 否则两份同名清单会导致 "Multiple commands produce" 构建冲突。
 
   s.frameworks          = 'UIKit', 'Foundation'
   s.libraries           = 'z', 'c++'
