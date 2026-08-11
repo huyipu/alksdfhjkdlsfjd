@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+（API 31+）系统强制启动画面定制：
+     - windowSplashScreenBackground：底色与 App 主题色一致，消除白屏
+     - windowSplashScreenAnimatedIcon：透明，去掉系统默认的居中 logo
+     深色模式由 values-night/colors.xml 的 splash_bg 自动切换底色 -->
+<resources>
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:windowSplashScreenBackground">@color/splash_bg</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+    </style>
+</resources>

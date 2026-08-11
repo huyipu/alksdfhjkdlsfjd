@@ -69,7 +69,9 @@
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>mqqopensdkapi</string>
 		<string>mqqapi</string>
+		<string>mqqwpa</string>
 		<string>mqq</string>
 		<string>mqqbrowser</string>
 	</array>

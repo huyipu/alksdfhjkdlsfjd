@@ -128,11 +128,21 @@ import UIKit
     }
   }
 
-  /// 唤起 QQ 加群：优先 qqKey 的 qm.qq.com 链接，其次 mqqapi 群名片 scheme
+  /// 唤起 QQ 加群：与 Android 对齐，优先 qqKey 的 mqqopensdkapi 直拉加群页，
+  /// 未装 QQ 退到 qm.qq.com 网页加群，最后兜底 mqqapi 群名片 scheme
   private func openQQGroup(number: String, key: String) -> Bool {
-    if !key.isEmpty, let url = URL(string: "https://qm.qq.com/q/\(key)") {
-      UIApplication.shared.open(url, options: [:], completionHandler: nil)
-      return true
+    if !key.isEmpty {
+      let inner = "http://qm.qq.com/cgi-bin/qm/qr?from=app&p=ios&jump_from=webapi&k=\(key)"
+      if let encoded = inner.addingPercentEncoding(withAllowedCharacters: .alphanumerics),
+         let url = URL(string: "mqqopensdkapi://bizAgent/qm/qr?url=\(encoded)"),
+         UIApplication.shared.canOpenURL(url) {
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        return true
+      }
+      if let url = URL(string: "https://qm.qq.com/q/\(key)") {
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        return true
+      }
     }
     if !number.isEmpty,
        let url = URL(string: "mqqapi://card/show_pslcard?src_type=internal&version=1&card_type=group&source=external&uin=\(number)"),

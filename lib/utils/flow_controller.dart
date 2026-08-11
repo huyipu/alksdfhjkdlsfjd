@@ -61,10 +61,11 @@ class FlowController {
       return;
     }
 
-    // 首屏弹窗（加群引导）：必须有QQ号或Key才展示；
+    // 首屏弹窗（加群引导）：必须有QQ号或Key且未点过"暂不加入"才展示；
     // 审核模式（auditMode）下强制不展示，不管后台怎么配置（渠道检测用）
     if (!_config.auditMode &&
         _config.guideEnable &&
+        !(Prefs().getBool(Prefs.keyGuideDone) ?? false) &&
         (_config.guideQqNumber.isNotEmpty || _config.guideQqKey.isNotEmpty)) {
       nav.pushReplacement(MaterialPageRoute(builder: (_) => GuidePage(config: _config)));
       return;

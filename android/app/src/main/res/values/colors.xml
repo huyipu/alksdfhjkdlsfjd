@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#332A20</color>
+    <!-- 启动画面底色：与 App 亮色主题宣纸色一致，消除白屏闪烁 -->
+    <color name="splash_bg">#F5F0E6</color>
 </resources>
