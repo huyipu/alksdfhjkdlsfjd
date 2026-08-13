@@ -3,6 +3,7 @@ import '../data/app_meta.dart';
 import '../services/api_service.dart';
 import '../utils/prefs.dart';
 import '../utils/theme.dart';
+import '../widgets/app_logo.dart';
 import 'about_page.dart';
 import 'collection_page.dart';
 import 'favorites_page.dart';
@@ -29,7 +30,7 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(14),
-                    child: Image.asset('assets/logo/app_logo.png', width: 56, height: 56, fit: BoxFit.cover),
+                    child: AppLogo(size: 56),
                   ),
                   const SizedBox(width: 16),
                   Expanded(

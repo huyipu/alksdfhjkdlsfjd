@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../services/data_service.dart';
 import '../utils/theme.dart';
+import 'app_logo.dart';
 import 'icon_image.dart';
 
 /// 分享卡片生成与分享（离屏渲染 RepaintBoundary → PNG → 系统分享）
@@ -206,7 +207,7 @@ class _Watermark extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
-          child: Image.asset('assets/logo/app_logo.png', width: 16, height: 16, fit: BoxFit.cover),
+          child: AppLogo(size: 16),
         ),
         const SizedBox(width: 6),
         const Text('天龙亿旧 · 经典网游怀旧图鉴', style: TextStyle(fontSize: 11, color: AppColors.inkLight)),

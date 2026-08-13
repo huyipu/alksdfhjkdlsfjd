@@ -12,6 +12,7 @@ class ApiService {
   ApiService._internal();
 
   late final Dio _dio;
+  bool _inited = false;
   AppConfig? _config;
 
   /// 后台 app_code（与 tlbb-admin「APP管理」一致，双端共用一个）
@@ -33,6 +34,8 @@ class ApiService {
   );
 
   void init() {
+    if (_inited) return; // 幂等：无网络重试时 _boot 会再次调用
+    _inited = true;
     _dio = Dio(BaseOptions(
       baseUrl: _baseUrl,
       connectTimeout: const Duration(seconds: 10),
@@ -65,10 +68,15 @@ class ApiService {
         queryParameters: {'app_code': appCode, 'platform': platform},
         options: Options(headers: _signedHeaders('')),
       );
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 &&
+          response.data != null &&
+          response.data is Map &&
+          response.data['code'] == 0) {
         _config = AppConfig.fromJson(response.data);
         return _config;
       }
+      // 业务码非 0（如签名失败 401）：按失败处理，走重试/退出弹窗
+      print('fetchConfig rejected: ${response.data}');
     } catch (e) {
       print('fetchConfig error: $e');
     }
