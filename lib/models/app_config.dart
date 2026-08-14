@@ -64,6 +64,7 @@ class AppConfig {
   final String copyrightOwner;
   final String softCertNo;
   final String icpNo;
+  final String developer;
 
   final bool privacyEnable;
   final String privacyTitle;
@@ -113,6 +114,7 @@ class AppConfig {
     this.copyrightOwner = '',
     this.softCertNo = '',
     this.icpNo = '',
+    this.developer = '',
     this.privacyEnable = false,
     this.privacyTitle = '',
     this.privacyContent = '',
@@ -169,6 +171,7 @@ class AppConfig {
       copyrightOwner: basic['copyright_owner'] ?? '',
       softCertNo: basic['soft_cert_no'] ?? '',
       icpNo: basic['icp_no'] ?? '',
+      developer: basic['developer'] ?? '',
       auditMode: _bool(basic['audit_mode']),
       privacyEnable: _bool(privacy['privacy_enable']),
       privacyTitle: privacy['privacy_title'] ?? '',

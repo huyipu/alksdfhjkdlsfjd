@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/legal_texts.dart';
+import '../services/api_service.dart';
 import '../utils/theme.dart';
 import '../widgets/linkified_text.dart';
 
@@ -9,8 +10,13 @@ class LegalPage extends StatelessWidget {
   final String content;
   const LegalPage({super.key, required this.title, required this.content});
 
-  static Widget userAgreement() => const LegalPage(title: '用户协议', content: LegalTexts.userAgreement);
-  static Widget privacyPolicy() => const LegalPage(title: '隐私政策', content: LegalTexts.privacyPolicy);
+  /// 开发者署名读后台 basic.developer；没配/离线时落款自动隐去该行
+  static String get _developer => ApiService().config?.developer ?? '';
+
+  static Widget userAgreement() =>
+      LegalPage(title: '用户协议', content: LegalTexts.userAgreement(developer: _developer));
+  static Widget privacyPolicy() =>
+      LegalPage(title: '隐私政策', content: LegalTexts.privacyPolicy(developer: _developer));
 
   @override
   Widget build(BuildContext context) {

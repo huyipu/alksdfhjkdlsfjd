@@ -26,13 +26,14 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     final p = AppColors.of(context);
     final ds = DataService();
-    // 底部信息接后台 basic 配置（footer_enable 开关 + 著作权人/软著/ICP备案号）；
-    // 后台没配或拿不到配置（如离线兜底）时回落到 AppMeta 静态值
+    // 底部信息接后台 basic 配置（footer_enable 总开关 + 逐行独立显隐）：
+    // 开发者/软著/备案号均后台有值才显示对应行；断网或没配就只隐去那一行，不做静态兜底
     final cfg = ApiService().config;
     final showFooter = cfg == null || cfg.footerEnable;
-    final owner = (cfg != null && cfg.copyrightOwner.isNotEmpty) ? cfg.copyrightOwner : AppMeta.developer;
+    final developer = cfg?.developer ?? '';
     final softCertNo = cfg?.softCertNo ?? '';
     final icpNo = cfg?.icpNo ?? '';
+    final copyrightOwner = cfg?.copyrightOwner ?? '';
     return Scaffold(
       appBar: AppBar(title: const Text('关于')),
       body: ListView(
@@ -68,8 +69,10 @@ class _AboutPageState extends State<AboutPage> {
           ),
           const SizedBox(height: 16),
           if (showFooter) ...[
-            Center(child: Text('开发者：$owner', style: TextStyle(fontSize: 13, color: p.inkLight))),
-            const SizedBox(height: 4),
+            if (developer.isNotEmpty) ...[
+              Center(child: Text('开发者：$developer', style: TextStyle(fontSize: 13, color: p.inkLight))),
+              const SizedBox(height: 4),
+            ],
             Center(child: Text('生效日期：${AppMeta.effectiveDate}', style: TextStyle(fontSize: 13, color: p.inkLight))),
             if (softCertNo.isNotEmpty) ...[
               const SizedBox(height: 4),
@@ -79,11 +82,13 @@ class _AboutPageState extends State<AboutPage> {
               const SizedBox(height: 4),
               Center(child: Text('备案号：$icpNo', style: TextStyle(fontSize: 13, color: p.inkLight))),
             ],
-            const SizedBox(height: 4),
-            Center(
-              child: Text(AppMeta.copyright,
-                  style: TextStyle(fontSize: 12, color: p.inkLight)),
-            ),
+            if (copyrightOwner.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Center(
+                child: Text('© ${DateTime.now().year} $copyrightOwner All Rights Reserved',
+                    style: TextStyle(fontSize: 12, color: p.inkLight)),
+              ),
+            ],
           ],
           const SizedBox(height: 32),
         ],

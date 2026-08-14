@@ -4,10 +4,21 @@ import 'app_meta.dart';
 /// 隐私政策参照既有产品结构撰写，第三方 SDK 披露依据
 /// 《巨量引擎转化SDK开发者使用合规规范（2025.2）》。
 /// 公司名/日期等信息统一引用 AppMeta，不在这里硬编码。
+/// 开发者署名由后台 basic.developer 配置驱动：有值才显示「开发者：xxx」行，无值（含离线）隐去该行。
 class LegalTexts {
   LegalTexts._();
 
-  static const String userAgreement = '''
+  /// 文末落款：有开发者署名才带「开发者」行
+  static String _tail(String developer) =>
+      '${developer.isNotEmpty ? '开发者：$developer\n' : ''}生效日期：${AppMeta.effectiveDate}\n';
+
+  static String userAgreement({String developer = ''}) =>
+      _userAgreementBody + _tail(developer);
+
+  static String privacyPolicy({String developer = ''}) =>
+      _privacyPolicyBody + _tail(developer);
+
+  static const String _userAgreementBody = '''
 一、引言
 
 欢迎使用「${AppMeta.appName}」（以下简称"本应用"）。本协议是您与本应用开发者之间关于使用本应用所订立的协议。请您在使用前仔细阅读本协议全部内容，您使用本应用即表示您已阅读并同意接受本协议的全部约定。
@@ -41,11 +52,9 @@ class LegalTexts {
 
 如您对本协议有任何疑问，可通过应用内「我的 → 意见反馈」与我们联系。
 
-开发者：${AppMeta.developer}
-生效日期：${AppMeta.effectiveDate}
 ''';
 
-  static const String privacyPolicy = '''
+  static const String _privacyPolicyBody = '''
 一、引言
 
 我们高度重视您的个人信息安全与隐私权益。本政策旨在向您清晰说明，在使用「${AppMeta.appName}」过程中，我们如何收集、使用、存储及管理您的相关信息。请您在使用前仔细阅读本政策的全部内容。
@@ -109,7 +118,5 @@ SDK 名称：巨量引擎转化SDK
 
 如您对本隐私政策有任何疑问，请通过应用内反馈渠道与我们联系。
 
-开发者：${AppMeta.developer}
-生效日期：${AppMeta.effectiveDate}
 ''';
 }

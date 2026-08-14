@@ -61,7 +61,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                       // 网络未就绪时隐私内容为空，用本地内置文本兜底
                       text: _stripHtml(widget.config.privacyContent.isNotEmpty
                           ? widget.config.privacyContent
-                          : LegalTexts.privacyPolicy),
+                          : LegalTexts.privacyPolicy(developer: widget.config.developer)),
                       style: TextStyle(fontSize: 14, height: 1.8, color: AppColors.of(context).ink),
                       linkColor: AppColors.primary,
                     ),
