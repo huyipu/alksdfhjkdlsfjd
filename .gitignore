@@ -56,3 +56,5 @@ ios-ci-secrets.md
 AuthKey_*
 ios-ci-secrets.md
 assets_src/
+# 备案材料（公钥/签名MD5/BundleID），不入库
+备案-*.txt
