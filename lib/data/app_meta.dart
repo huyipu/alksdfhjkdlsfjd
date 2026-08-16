@@ -4,7 +4,8 @@ class AppMeta {
 
   static const String appName = '天龙亿旧';
   static const String slogan = '老天龙玩家的随身图鉴与时光机';
-  static const String version = '1.1.0';
+  // 版本号运行时从包信息读取（跟随 pubspec version，升级只改 pubspec），此处仅为启动前兜底
+  static String version = '1.0.0';
   // 开发者署名已改为后台 basic.developer 配置驱动（无值则隐去对应行），App 内不再写死
   static const String effectiveDate = '2026年8月7日'; // 用户协议/隐私政策生效日期
 }

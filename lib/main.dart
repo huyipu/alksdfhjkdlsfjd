@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'data/app_meta.dart';
 import 'pages/splash_page.dart';
 import 'utils/prefs.dart';
 import 'utils/theme.dart';
@@ -20,6 +22,8 @@ class _TlbbAppState extends State<TlbbApp> {
   void initState() {
     super.initState();
     Prefs().init().then((_) => ThemeController().load());
+    // 版本号跟随 pubspec（关于页/我的页展示用）
+    PackageInfo.fromPlatform().then((info) => AppMeta.version = info.version);
   }
 
   @override

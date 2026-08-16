@@ -13,28 +13,30 @@ async function main() {
   const contentsPath = path.join(setDir, 'Contents.json');
   const contents = JSON.parse(fs.readFileSync(contentsPath, 'utf8'));
 
-  // 全部槽位用白天图（不透明，无 alpha，App Store 要求）
-  for (const img of contents.images) {
+  // 只处理基础槽位（不含 dark 变体），重建 images 数组
+  const baseImages = contents.images.filter((i) => !i.appearances);
+  const images = [];
+  for (const img of baseImages) {
     const px = Math.round(parseFloat(img.size) * parseInt(img.scale));
+    // 白天图（不透明，无 alpha，App Store 要求）
     await sharp(SRC_LIGHT).resize(px, px).flatten({ background: '#ffffff' }).png()
       .toFile(path.join(setDir, img.filename));
-  }
-
-  // iOS 18+ 深色外观：1024 槽位加一个 dark appearance 变体
-  const darkName = 'Icon-App-1024x1024-dark@1x.png';
-  await sharp(SRC_DARK).resize(1024, 1024).flatten({ background: '#000000' }).png()
-    .toFile(path.join(setDir, darkName));
-  if (!contents.images.some((i) => i.filename === darkName)) {
-    contents.images.push({
-      size: '1024x1024',
-      idiom: 'ios-marketing',
+    images.push(img);
+    // iOS 18+ 深色外观：每个槽位都配 dark appearance 变体（只配 1024 主屏幕不会切换）
+    const darkName = img.filename.replace('@', '-dark@');
+    await sharp(SRC_DARK).resize(px, px).flatten({ background: '#000000' }).png()
+      .toFile(path.join(setDir, darkName));
+    images.push({
+      size: img.size,
+      idiom: img.idiom,
       filename: darkName,
-      scale: '1x',
+      scale: img.scale,
       appearances: [{ appearance: 'luminosity', value: 'dark' }],
     });
   }
+  contents.images = images;
   fs.writeFileSync(contentsPath, JSON.stringify(contents, null, 2) + '\n');
-  console.log('iOS 图标完成（含深色变体）');
+  console.log('iOS 图标完成（全槽位含深色变体）');
 
   // ---------- Android ----------
   // 背景色取白天图左上角像素（图标自身底色），保证遮罩裁切后颜色无缝
