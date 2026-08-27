@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/app_config.dart';
@@ -78,6 +79,8 @@ class _SplashPageState extends State<SplashPage> {
 
   void _exitApp() {
     // iOS 上 SystemNavigator.pop 无效果，直接结束进程（与隐私页退出语义一致）
+    // Web 端无退出概念，什么都不做
+    if (kIsWeb) return;
     if (Platform.isIOS) {
       exit(0);
     } else {

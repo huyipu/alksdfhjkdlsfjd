@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/legal_texts.dart';
@@ -58,10 +59,12 @@ class _PrivacyPageState extends State<PrivacyPage> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: LinkifiedText(
-                      // 网络未就绪时隐私内容为空，用本地内置文本兜底
+                      // 网络未就绪时隐私内容为空，用本地内置文本兜底（iOS 用无 Android 引用的精简版）
                       text: _stripHtml(widget.config.privacyContent.isNotEmpty
                           ? widget.config.privacyContent
-                          : LegalTexts.privacyPolicy(developer: widget.config.developer)),
+                          : (Platform.isIOS
+                              ? LegalTexts.privacyPolicyIOS(developer: widget.config.developer)
+                              : LegalTexts.privacyPolicy(developer: widget.config.developer))),
                       style: TextStyle(fontSize: 14, height: 1.8, color: AppColors.of(context).ink),
                       linkColor: AppColors.primary,
                     ),
