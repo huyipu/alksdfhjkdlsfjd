@@ -38,7 +38,7 @@ import UIKit
     return super.application(app, open: url, options: options)
   }
 
-  // ---------------- com.tlbb.host/ads 方法通道（与 Android MainActivity.kt 对齐） ----------------
+  // ---------------- com.tlbb.host/ads 方法通道 ----------------
 
   private func handleAdsCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     let args = call.arguments as? [String: Any] ?? [:]
@@ -69,7 +69,7 @@ import UIKit
     case "reportLogin":
       let method = args["method"] as? String ?? "default"
       let success = args["success"] as? Bool ?? true
-      // SDK 无内置登录事件，按 Android 侧约定用自定义事件名 log_in
+      // SDK 无内置登录事件，使用自定义事件名 log_in
       BDASignalManager.trackEssentialEvent(
         withName: "log_in",
         params: ["method": method, "is_success": success]
@@ -104,10 +104,6 @@ import UIKit
       notifyEventResult(eventName: eventName, success: true)
       result(true)
 
-    case "getAndroidId":
-      // iOS 没有 android_id，用 IDFV 顶替（与后端日志字段对齐即可）
-      result(UIDevice.current.identifierForVendor?.uuidString)
-
     case "openQQGroup":
       let qqNumber = args["qqNumber"] as? String ?? ""
       let qqKey = args["qqKey"] as? String ?? ""
@@ -128,7 +124,7 @@ import UIKit
     }
   }
 
-  /// 唤起 QQ 加群：与 Android 对齐，优先 qqKey 的 mqqopensdkapi 直拉加群页，
+  /// 唤起 QQ 加群：优先 qqKey 的 mqqopensdkapi 直拉加群页，
   /// 未装 QQ 退到 qm.qq.com 网页加群，最后兜底 mqqapi 群名片 scheme
   private func openQQGroup(number: String, key: String) -> Bool {
     if !key.isEmpty {

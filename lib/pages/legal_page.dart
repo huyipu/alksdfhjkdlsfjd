@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../data/legal_texts.dart';
 import '../services/api_service.dart';
@@ -15,8 +16,12 @@ class LegalPage extends StatelessWidget {
 
   static Widget userAgreement() =>
       LegalPage(title: '用户协议', content: LegalTexts.userAgreement(developer: _developer));
-  static Widget privacyPolicy() =>
-      LegalPage(title: '隐私政策', content: LegalTexts.privacyPolicy(developer: _developer));
+  static Widget privacyPolicy() => LegalPage(
+        title: '隐私政策',
+        content: Platform.isIOS
+            ? LegalTexts.privacyPolicyIOS(developer: _developer)
+            : LegalTexts.privacyPolicy(developer: _developer),
+      );
 
   @override
   Widget build(BuildContext context) {

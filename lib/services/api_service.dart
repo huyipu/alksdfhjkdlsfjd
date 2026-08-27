@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../models/app_config.dart';
 import '../utils/prefs.dart';
 
@@ -25,7 +26,11 @@ class ApiService {
   String get baseUrl => _dio.options.baseUrl;
 
   /// 平台标记：android / ios（统计与配置平台覆盖都靠它）
-  static String get platform => Platform.isIOS ? 'ios' : 'android';
+  /// Web 端不支持 Platform，按 android 上报以保证后台配置/统计兼容
+  static String get platform {
+    if (kIsWeb) return 'android';
+    return Platform.isIOS ? 'ios' : 'android';
+  }
 
   /// 接口地址：默认本机局域网调试地址；打包/部署用 --dart-define=API_BASE_URL=xxx 覆盖
   static const String _baseUrl = String.fromEnvironment(
@@ -130,14 +135,13 @@ class ApiService {
       if (deviceId.isEmpty) {
         deviceId = await getDeviceId();
       }
-      final body = jsonEncode({
+      final payload = <String, dynamic>{
         'app_code': appCode,
         'event_name': eventName,
         'request_id': requestId,
         'success': success,
         'reason': reason,
         'device_id': deviceId,
-        'android_id': Prefs().getString(Prefs.keyAndroidId) ?? '',
         'platform': platform,
         'source': eventSources[eventName] ??
             (eventName == 'init' ||
@@ -147,7 +151,11 @@ class ApiService {
                 ? 'sdk_auto'
                 : ''),
         'client_time': DateTime.now().toIso8601String(),
-      });
+      };
+      if (!Platform.isIOS) {
+        payload['android_id'] = Prefs().getString(Prefs.keyAndroidId) ?? '';
+      }
+      final body = jsonEncode(payload);
       await _dio.post('/api/app/event-log',
           data: body,
           options: Options(
